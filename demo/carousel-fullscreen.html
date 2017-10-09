@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>轮播</title>
+	<style>
+		*{
+		  margin: 0;
+		  padding: 0;
+		}
+		ul>li{
+		  list-style: none;
+		}
+		.carousel{
+		  position: relative;
+		  width: 800px;
+		  height: 500px;
+		  overflow: hidden;
+		  margin: 0 auto;
+		  margin-top: 10px; 
+		}
+		.carousel>.img-ct{
+		  /*width: 4800px;*/
+		  position:absolute;
+		}
+		.carousel>.img-ct::after{
+		  content: "";
+		  display: blcok;
+		  clear: both;
+		}
+		.carousel>.img-ct>li{
+		  float: left;
+		}
+		.carousel>.img-ct>li>a>img{
+		  width: 800px;
+		  height: 500px;
+		}
+		.carousel>.arrow{
+		  position: absolute;
+		  width: 50px;
+		  height: 50px;
+		  display: inline-block;
+		  border: 1px solid #797171;
+		  border-radius: 50%;
+		  top: 50%;
+		  margin-top: -25px;
+		  text-align:center;
+		  line-height: 50px;
+		  text-decoration:none;
+		  opacity: 0.6;
+		  color: #fff;
+		  background: #797171;
+		}
+		.carousel>.arrow:hover{
+		  opacity: 1;
+		}
+		.carousel>.pre{
+		  left: 10px;
+		}
+		.carousel>.next{
+		  right: 10px;
+		}
+		.carousel>.bullet{
+		  position: absolute;
+		  width: 100%;
+		  height: 10px;
+		  bottom: 10px;
+		  font-size:0;
+		  text-align:center;
+		}
+		.carousel>.bullet>li{
+		  display: inline-block;
+		  width: 40px;
+		  height: 10px;
+		  border-radius: 5px; 
+		  border: 1px solid #fff;
+		  margin: 0 5px;
+		  cursor: pointer;
+		}
+		.carousel>.bullet>.active{
+		  background: #fff;
+		}
+
+
+
+	</style>
+</head>
+<body>
+<div class="carousel">
+	<ul class="img-ct">
+		<li data-id=0><a href="javascript:void(0)"><img src="https://images.unsplash.com/photo-1448376561459-dbe8868fa34c?dpr=1&auto=compress,format&fit=crop&w=1500&h=&q=80&cs=tinysrgb&crop=" alt=""></a></li>
+		<li data-id=1><a href="javascript:void(0)"><img src="https://images.unsplash.com/photo-1484399172022-72a90b12e3c1?dpr=1&auto=compress,format&fit=crop&w=1500&h=&q=80&cs=tinysrgb&crop=" alt=""></a></li>
+		<li data-id=2><a href="javascript:void(0)"><img src="https://images.unsplash.com/photo-1464841851675-a119844d1bf6?dpr=1&auto=compress,format&fit=crop&w=1500&h=&q=80&cs=tinysrgb&crop=" alt=""></a></li>
+		<li data-id=3><a href="javascript:void(0)"><img src="https://images.unsplash.com/photo-1490905461158-067f4895ea9d?dpr=1&auto=compress,format&fit=crop&w=1504&h=&q=80&cs=tinysrgb&crop=" alt=""></a></li>
+		<li data-id=4><a href="javascript:void(0)"><img src="https://images.unsplash.com/photo-1483555714914-20a74b6e45f5?dpr=1&auto=compress,format&fit=crop&w=1500&h=&q=80&cs=tinysrgb&crop=" alt=""></a></li>
+		<li data-id=5><a href="javascript:void(0)"><img src="https://images.unsplash.com/photo-1485913149399-a59b6725c5ae?dpr=1&auto=compress,format&fit=crop&w=1500&h=&q=80&cs=tinysrgb&crop=" alt=""></a></li>
+	</ul>
+	<a class="pre arrow" href="javascript:void(0)"><</a>
+	<a class="next arrow" href="javascript:void(0)">></a>
+	<ul class="bullet">
+		<li class="active"></li>
+		<li></li>
+		<li></li>
+		<li></li>
+		<li></li>
+		<li></li>
+	</ul>
+	<script type="text/javascript" src="http://apps.bdimg.com/libs/jquery/1.9.1/jquery.min.js"></script>
+	<script>
+		var $imgCt = $('.carousel .img-ct')
+		var $imgs = $('.carousel .img-ct > li')
+		var $preBtn = $('.carousel .pre')
+		var $nextBtn = $('.carousel .next')
+		var $bullets = $('.carousel .bullet li')
+
+		var imgCount = $imgs.length
+		var imgWidth = $imgs.width()
+
+		var pageIndex = 0
+		var	isAnimate = false
+
+		
+		$imgCt.append($imgs.first().clone())
+		$imgCt.prepend($imgs.last().clone())
+		$imgCt.width((imgCount + 2 ) * imgWidth)
+		$imgCt.css({left: -imgWidth})
+		// console.log(pageIndex)
+
+		$preBtn.click(function(){
+			playPre(1)
+			// console.log(pageIndex)
+		})
+		$nextBtn.click(function() {
+			playNext(1)
+			// console.log(pageIndex)
+		})
+
+		$bullets.click(function(){
+			var index = $(this).index()
+			if(index > pageIndex){
+				playNext(index - pageIndex)
+			}else if(index < pageIndex){
+				playPre(pageIndex - index)
+			}
+		})
+
+
+
+		function playNext(len){
+			if(isAnimate) return;
+			isAnimate = true;
+			$imgCt.animate({
+				left: '-='+len*imgWidth
+			},function(){
+				pageIndex += len
+				if(pageIndex === imgCount){
+					pageIndex = 0
+					console.log("next")
+					console.log('pageIndex')
+					$imgCt.css({left: -imgWidth})
+				}
+				setBullet()
+				isAnimate = false
+			})
+		}
+
+		function playPre(len){
+			if(isAnimate) return;
+			isAnimate = true;
+			$imgCt.animate({
+				left: '+='+len*imgWidth
+			},function(){
+				pageIndex -= len
+				// console.log(pageIndex)
+				if(pageIndex < 0){
+					pageIndex = imgCount - 1
+					$imgCt.css({left: -imgCount*imgWidth})
+				}
+				setBullet()
+				isAnimate = false
+			})
+		}
+		function setBullet(){
+			$bullets.removeClass('active')
+					.eq(pageIndex)
+					.addClass('active')
+					// console.log("active")
+					// console.log(pageIndex)
+		}
+	</script>
+	
+</div>
+	
+</body>
+</html>
